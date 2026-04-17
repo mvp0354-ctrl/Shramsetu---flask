@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main class="layout layout--wide">
+    <section class="card card--sidebar">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Dashboard</p>
+          <h2>Contractor Panel</h2>
+        </div>
+        <a href="{{ url_for('logout') }}" class="button button--ghost">Logout</a>
+      </div>
+      <p class="dashboard-note">
+        Welcome {{ user.name }}. Register labourers, create labour login IDs, and declare wages by location.
+      </p>
+      <div class="credential">
+        <strong>Current User</strong>
+        <span>{{ user.username }} | {{ user.role|title }}</span>
+      </div>
+      {% include "_account_tools.html" %}
+    </section>
+
+    <section class="card">
+      <div class="dashboard-grid dashboard-grid--contractor">
+        {% include "_notifications_panel.html" %}
+        {% include "_bills_panel.html" %}
+
+        <section class="subcard subcard--form">
+          <div class="subcard__heading">
+            <h3>Register Labour</h3>
+            <p>Contractor fills the labour form here.</p>
+          </div>
+          <form method="post" action="{{ url_for('add_labour') }}" class="form form--dense">
+            <label>
+              <span class="label-title"><span class="label-icon">NM</span> Labour Name</span>
+              <input name="name" type="text" required>
+            </label>
+            <label>
+              <span class="label-title"><span class="label-icon">SK</span> Skill</span>
+              <input name="skill" type="text" placeholder="Mason, Electrician, Helper" required>
+            </label>
+            <label>
+              <span class="label-title"><span class="label-icon">☎</span> Phone</span>
+              <input name="phone" type="tel" required>
+            </label>
+            <label>
+              <span class="label-title"><span class="label-icon">LT</span> Location</span>
+              <input name="location" type="text" placeholder="Pune Site A" required>
+            </label>
+            <label>
+              <span class="label-title"><span class="label-icon">Rs</span> Wage Per Day</span>
+              <input name="wage" type="number" min="0" required>
+            </label>
+            <label>
+              <span class="label-title"><span class="label-icon">ST</span> Work Status</span>
+              <select name="status" required>
+                <option value="Assigned">Assigned</option>
+                <option value="Available">Available</option>
+                <option value="On Leave">On Leave</option>
+              </select>
+            </label>
+            <button type="submit" class="button button--primary">Add Labour</button>
+          </form>
+        </section>
+
+        <section class="subcard">
+          <div class="subcard__heading">
+            <h3>Your Workforce</h3>
+            <p>All labourers under this contractor.</p>
+          </div>
+          {% if labourers %}
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Skill</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Wage/Day</th>
+                    <th>Status</th>
+                    <th>Assigned Details</th>
+                    <th>Leave Details</th>
+                    <th>Login</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for labour in labourers %}
+                    <tr>
+                      <td>{{ labour.name }}</td>
+                      <td>{{ labour.skill }}</td>
+                      <td>{{ labour.phone }}</td>
+                      <td>{{ labour.location }}</td>
+                      <td>Rs. {{ labour.wage }}</td>
+                      <td><span class="status-badge">{{ labour.status }}</span></td>
+                      <td>
+                        {{ labour.client_name or "-" }}<br>
+                        {{ labour.work_start_date or "-" }} {{ labour.work_start_time or "" }}{% if labour.work_end_date or labour.work_end_time %} to {{ labour.work_end_date or "" }} {{ labour.work_end_time or "" }}{% endif %}
+                      </td>
+                      <td>
+                        {{ labour.leave_start_date or "-" }} {{ labour.leave_start_time or "" }}{% if labour.leave_end_date or labour.leave_end_time %} to {{ labour.leave_end_date or "" }} {{ labour.leave_end_time or "" }}{% endif %}<br>
+                        {{ labour.leave_reason or "-" }}{% if labour.leave_requested_by %}<br>By {{ labour.leave_requested_by }}{% endif %}
+                      </td>
+                      <td>{{ labour.labour_username or "-" }}</td>
+                      <td>
+                        <details class="inline-editor">
+                          <summary class="button button--ghost button--small">Edit</summary>
+                          <form method="post" action="{{ url_for('update_contractor_labour', labour_username=labour.labour_username) }}" class="form inline-editor__form">
+                            <input name="name" type="text" value="{{ labour.name }}" required>
+                            <input name="skill" type="text" value="{{ labour.skill }}" required>
+                            <input name="phone" type="tel" value="{{ labour.phone }}" required>
+                            <input name="location" type="text" value="{{ labour.location }}" required>
+                            <input name="wage" type="number" min="0" value="{{ labour.wage }}" required>
+                            <input name="client_name" type="text" value="{{ labour.client_name or '' }}" placeholder="Assigned client">
+                            <input name="work_start_date" type="date" value="{{ labour.work_start_date or '' }}">
+                            <input name="work_end_date" type="date" value="{{ labour.work_end_date or '' }}">
+                            <input name="work_start_time" type="time" value="{{ labour.work_start_time or '' }}">
+                            <input name="work_end_time" type="time" value="{{ labour.work_end_time or '' }}">
+                            <input name="leave_start_date" type="date" value="{{ labour.leave_start_date or '' }}">
+                            <input name="leave_end_date" type="date" value="{{ labour.leave_end_date or '' }}">
+                            <input name="leave_start_time" type="time" value="{{ labour.leave_start_time or '' }}">
+                            <input name="leave_end_time" type="time" value="{{ labour.leave_end_time or '' }}">
+                            <textarea name="leave_reason" rows="2" placeholder="Leave reason">{{ labour.leave_reason or '' }}</textarea>
+                            <select name="status" required>
+                              <option value="Assigned" {% if labour.status == "Assigned" %}selected{% endif %}>Assigned</option>
+                              <option value="Available" {% if labour.status == "Available" %}selected{% endif %}>Available</option>
+                              <option value="On Leave" {% if labour.status == "On Leave" %}selected{% endif %}>On Leave</option>
+                            </select>
+                            <button type="submit" class="button button--primary button--small">Save</button>
+                          </form>
+                        </details>
+                      </td>
+                      <td>
+                        <form method="post" action="{{ url_for('delete_contractor_labour', labour_username=labour.labour_username) }}">
+                          <button type="submit" class="button button--danger button--small">Delete</button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="empty-state">No labour records added yet.</div>
+          {% endif %}
+        </section>
+      </div>
+    </section>
+  </main>
+{% endblock %}

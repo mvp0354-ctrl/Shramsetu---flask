@@ -1,0 +1,79 @@
+<section class="subcard subcard--full-span">
+  <div class="subcard__heading">
+    <div>
+      <h3>Bill Records</h3>
+      <p>Generated billing entries stored in the portal and database.</p>
+    </div>
+  </div>
+
+  {% if bills %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Bill No.</th>
+            <th>Labour</th>
+            <th>Contractor</th>
+            <th>Client</th>
+            <th>Skill / Location</th>
+            <th>Work Slot</th>
+            <th>Days</th>
+            <th>Wage/Day</th>
+            <th>Total</th>
+            <th>Bill Status</th>
+            <th>Payment</th>
+            <th>Review</th>
+            {% if user.role == "client" %}
+              <th>Action</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for bill in bills %}
+            <tr>
+              <td>{{ bill.bill_number }}</td>
+              <td>{{ bill.labour_name }}</td>
+              <td>{{ bill.contractor_name }}</td>
+              <td>{{ bill.client_name }}</td>
+              <td>{{ bill.skill }}<br>{{ bill.location }}</td>
+              <td>{{ bill.work_start_date }} {{ bill.work_start_time }}<br>to {{ bill.work_end_date }} {{ bill.work_end_time }}</td>
+              <td>{{ bill.total_days }}</td>
+              <td>Rs. {{ bill.wage_per_day }}</td>
+              <td>Rs. {{ bill.total_amount }}</td>
+              <td><span class="status-badge">{{ bill.status }}</span></td>
+              <td>
+                <span class="status-badge">{{ bill.payment_status }}</span><br>
+                {{ bill.payment_method }}{% if bill.payment_reference != "-" %}<br>{{ bill.payment_reference }}{% endif %}
+              </td>
+              <td>{{ bill.review or "-" }}</td>
+              {% if user.role == "client" %}
+                <td>
+                  {% if bill.payment_status != "Paid" %}
+                    <details class="inline-editor payment-editor">
+                      <summary class="button button--ghost button--small">Pay</summary>
+                      <form method="post" action="{{ url_for('pay_bill', bill_number=bill.bill_number) }}" class="form inline-editor__form">
+                        <select name="payment_method" required>
+                          <option value="UPI">UPI</option>
+                          <option value="Net Banking">Net Banking</option>
+                          <option value="Debit/Credit Card">Debit/Credit Card</option>
+                          <option value="Cash on Field">Cash on Field</option>
+                        </select>
+                        <input name="payment_reference" type="text" placeholder="UTR / Txn ID / note">
+                        <button type="submit" class="button button--primary button--small">Pay Now</button>
+                        <a href="{{ bill.upi_link }}" class="button button--ghost button--small">Open UPI App</a>
+                      </form>
+                    </details>
+                  {% else %}
+                    <span class="dashboard-note">Paid</span>
+                  {% endif %}
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">No bill records available.</div>
+  {% endif %}
+</section>

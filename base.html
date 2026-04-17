@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shramsetu Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <div class="hero__copy">
+        <h1>Shramsetu</h1>
+      </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash flash--{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+  <script>
+    document.querySelectorAll('input[type="tel"], input[name="phone"]').forEach((input) => {
+      input.setAttribute("inputmode", "numeric");
+      input.setAttribute("maxlength", "10");
+      input.setAttribute("pattern", "[0-9]{10}");
+
+      input.addEventListener("input", () => {
+        input.value = input.value.replace(/\D/g, "").slice(0, 10);
+      });
+    });
+
+    document.querySelectorAll('input[type="password"]').forEach((input) => {
+      if (input.dataset.passwordToggleReady === "true") {
+        return;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "password-field";
+      input.parentNode.insertBefore(wrapper, input);
+      wrapper.appendChild(input);
+
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "password-toggle";
+      toggle.textContent = "Show";
+      toggle.setAttribute("aria-label", "Show password");
+
+      toggle.addEventListener("click", () => {
+        const shouldShow = input.type === "password";
+        input.type = shouldShow ? "text" : "password";
+        toggle.textContent = shouldShow ? "Hide" : "Show";
+        toggle.setAttribute("aria-label", shouldShow ? "Hide password" : "Show password");
+      });
+
+      wrapper.appendChild(toggle);
+      input.dataset.passwordToggleReady = "true";
+    });
+  </script>
+</body>
+</html>

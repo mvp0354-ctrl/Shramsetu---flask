@@ -1,0 +1,61 @@
+<details class="menu-panel">
+  <summary class="button button--ghost menu-button">Menu</summary>
+  <div class="menu-panel__body">
+    <section class="subcard account-tools">
+      <div class="subcard__heading">
+        <div>
+          <h3>Edit Profile</h3>
+          <p>Update your name and mobile number.</p>
+        </div>
+      </div>
+      <form method="post" action="{{ url_for('update_profile') }}" class="form">
+        <label>
+          <span class="label-title"><span class="label-icon">NM</span> {{ "Company Name" if user.role == "contractor" else "Full Name" }}</span>
+          <input name="full_name" type="text" value="{{ user.name }}" required>
+        </label>
+        <label>
+          <span class="label-title"><span class="label-icon">☎</span> Mobile Number</span>
+          <input name="phone" type="tel" value="{{ user.phone or '' }}" placeholder="Enter mobile number">
+        </label>
+        <button type="submit" class="button button--ghost">Save Profile</button>
+      </form>
+    </section>
+
+    <section class="subcard account-tools">
+      <div class="subcard__heading">
+        <div>
+          <h3>Change Password</h3>
+          <p>Update your password anytime.</p>
+        </div>
+      </div>
+      <form method="post" action="{{ url_for('change_password') }}" class="form">
+        <label>
+          <span class="label-title"><span class="label-icon">PW</span> Current Password</span>
+          <input name="current_password" type="password" required>
+        </label>
+        <label>
+          <span class="label-title"><span class="label-icon">NW</span> New Password</span>
+          <input name="new_password" type="password" required>
+        </label>
+        <label>
+          <span class="label-title"><span class="label-icon">OK</span> Confirm Password</span>
+          <input name="confirm_password" type="password" required>
+        </label>
+        <button type="submit" class="button button--ghost">Change Password</button>
+      </form>
+    </section>
+
+    <section class="subcard account-tools">
+      <div class="subcard__heading">
+        <div>
+          <h3>About</h3>
+          <p>Shramsetu connects labour, contractors, clients, and admin in one workflow.</p>
+        </div>
+      </div>
+      <p class="dashboard-note">
+        Contractors register labour, clients hire workers with time slots, labourers track assigned work,
+        and admins manage the entire portal from one place.
+      </p>
+    </section>
+  </div>
+</details>

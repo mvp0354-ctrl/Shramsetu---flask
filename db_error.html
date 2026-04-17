@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main class="layout">
+    <section class="card">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Database Error</p>
+          <h2>MySQL Connection Required</h2>
+        </div>
+      </div>
+      <div class="empty-state">
+        The portal could not connect to MySQL.
+        <br><br>
+        Error: {{ error_message }}
+        <br><br>
+        Create the database named <strong>shramsetu</strong>, update your MySQL settings, and run the app again.
+      </div>
+    </section>
+  </main>
+{% endblock %}

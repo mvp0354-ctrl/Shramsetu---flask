@@ -1,0 +1,22 @@
+<section class="subcard subcard--full-span">
+  <div class="subcard__heading">
+    <div>
+      <h3>Recent Notifications</h3>
+      <p>Latest labour and billing updates linked to your account.</p>
+    </div>
+  </div>
+
+  {% if notifications %}
+    <div class="notice-list">
+      {% for notification in notifications %}
+        <article class="notice-card">
+          <strong>{{ notification.title }}</strong>
+          <p>{{ notification.message }}</p>
+          <span class="notice-time">{{ notification.created_at }}</span>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">No notifications yet.</div>
+  {% endif %}
+</section>

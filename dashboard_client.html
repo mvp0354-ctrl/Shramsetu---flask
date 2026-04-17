@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main class="layout layout--wide">
+    <section class="card card--sidebar">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Dashboard</p>
+          <h2>Client Hiring Panel</h2>
+        </div>
+        <a href="{{ url_for('logout') }}" class="button button--ghost">Logout</a>
+      </div>
+      <p class="dashboard-note">
+        Welcome {{ user.name }}. Review available labour by location and wages before hiring.
+      </p>
+      {% include "_account_tools.html" %}
+    </section>
+
+    <section class="card">
+      <div class="dashboard-grid dashboard-grid--single">
+        {% include "_notifications_panel.html" %}
+
+        <section class="subcard">
+          <div class="subcard__heading">
+            <h3>Available Labour to Buy</h3>
+            <p>Hire available workers directly from this list.</p>
+          </div>
+
+          {% if available_labourers %}
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Skill</th>
+                    <th>Location</th>
+                    <th>Wage/Day</th>
+                    <th>Contractor</th>
+                    <th>Dates and Times</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for labour in available_labourers %}
+                    <tr>
+                      <td>{{ labour.name }}</td>
+                      <td>{{ labour.skill }}</td>
+                      <td>{{ labour.location }}</td>
+                      <td>Rs. {{ labour.wage }}</td>
+                      <td>{{ labour.contractor }}</td>
+                      <td>
+                        <form method="post" action="{{ url_for('hire_labour', labour_id=labour.id) }}" class="slot-form">
+                          <div class="slot-grid">
+                            <input name="work_start_date" type="date" required>
+                            <input name="work_end_date" type="date" required>
+                            <input name="work_start_time" type="time" required>
+                            <input name="work_end_time" type="time" required>
+                          </div>
+                      </td>
+                      <td>
+                          <button type="submit" class="button button--primary button--small">Buy Labour</button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="empty-state">No labour is available to buy right now.</div>
+          {% endif %}
+        </section>
+
+        <section class="subcard">
+          <div class="subcard__heading">
+            <h3>Your Purchased Labour</h3>
+            <p>Workers currently hired by this client account.</p>
+          </div>
+
+          {% if hired_labourers %}
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Skill</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Dates</th>
+                    <th>Times</th>
+                    <th>Wage/Day</th>
+                    <th>Contractor</th>
+                    <th>Complete Work</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for labour in hired_labourers %}
+                    <tr>
+                      <td>{{ labour.name }}</td>
+                      <td>{{ labour.skill }}</td>
+                      <td>{{ labour.phone }}</td>
+                      <td>{{ labour.location }}</td>
+                      <td>{{ labour.work_start_date }} to {{ labour.work_end_date }}</td>
+                      <td>{{ labour.work_start_time }} to {{ labour.work_end_time }}</td>
+                      <td>Rs. {{ labour.wage }}</td>
+                      <td>{{ labour.contractor }}</td>
+                      <td>
+                        <form method="post" action="{{ url_for('complete_labour', labour_id=labour.id) }}" class="review-form">
+                          <textarea name="review" rows="2" placeholder="Write review after work completion"></textarea>
+                          <button type="submit" class="button button--ghost button--small">Complete + Review</button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="empty-state">You have not bought any labour yet.</div>
+          {% endif %}
+        </section>
+
+        {% include "_bills_panel.html" %}
+
+        <section class="subcard">
+        <div class="subcard__heading">
+          <h3>Hire Labour by Location</h3>
+          <p>Check worker availability, skill mix, and wages before choosing a site workforce.</p>
+        </div>
+
+        {% if locations %}
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Location</th>
+                  <th>Workers</th>
+                  <th>Skills</th>
+                  <th>Average Wage</th>
+                  <th>Contractors</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in locations %}
+                  <tr>
+                    <td>{{ item.location }}</td>
+                    <td>{{ item.workers }}</td>
+                    <td>{{ item.skills }}</td>
+                    <td>Rs. {{ item.average_wage }}</td>
+                    <td>{{ item.contractors }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state">No project locations available right now.</div>
+        {% endif %}
+        </section>
+      </div>
+    </section>
+  </main>
+{% endblock %}
