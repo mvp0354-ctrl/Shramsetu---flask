@@ -1,0 +1,52 @@
+{
+  "users": [
+    {
+      "role": "contractor",
+      "username": "contractor1",
+      "password": "1234",
+      "name": "Rakesh Buildcon"
+    },
+    {
+      "role": "labour",
+      "username": "labour1",
+      "password": "1234",
+      "name": "Suresh Kumar"
+    },
+    {
+      "role": "client",
+      "username": "client1",
+      "password": "1234",
+      "name": "Metro Infra Client"
+    },
+    {
+      "role": "admin",
+      "username": "admin1",
+      "password": "1234",
+      "name": "Portal Admin"
+    }
+  ],
+  "labourers": [
+    {
+      "id": 1,
+      "name": "Suresh Kumar",
+      "skill": "Mason",
+      "phone": "9876543210",
+      "location": "Nagpur Site A",
+      "wage": 750,
+      "status": "Assigned",
+      "contractor": "Rakesh Buildcon",
+      "labour_username": "labour1"
+    },
+    {
+      "id": 2,
+      "name": "Anita Devi",
+      "skill": "Electrician",
+      "phone": "9123456780",
+      "location": "Pune Tower Project",
+      "wage": 900,
+      "status": "Assigned",
+      "contractor": "Rakesh Buildcon",
+      "labour_username": ""
+    }
+  ]
+}
